@@ -1,0 +1,54 @@
+*Pick And Place List
+*Company=
+*Author=
+*eMail=
+*
+*Project=sensorysub
+*Date=17:45:10
+*CreatedBy=Fritzing 0.9.0b.06.11.da4e
+*
+*
+*Coordinates in mm, always center of component
+*Origin 0/0=Lower left corner of PCB
+*Rotation in degree (0-360, math. pos.)
+*
+*No;Value;Package;X;Y;Rotation;Side;Name
+1;;THT;12.3957;-6.38968;-90;Bottom;J15
+2;;THT;22.5557;-33.0597;-90;Bottom;J5
+3;;DIP (Dual Inline) [THT];13.6657;-26.7097;90;Bottom;ULN2803
+4;;THT;40.3357;-33.0597;-90;Bottom;J2
+5;;THT;45.4157;-33.0597;-90;Bottom;J1
+6;220;THT;33.9857;-14.0097;-90;Bottom;R6
+7;;THT;7.31573;-33.0597;-90;Bottom;J8
+8;;THT;30.1757;-6.38968;-90;Bottom;J12
+9;220;THT;8.58573;-14.0097;-90;Bottom;R15
+10;;;40.6727;-2.61407;0;Bottom;TXT1
+11;;;16.5871;-36.324;0;Bottom;TXT1
+12;220;THT;21.2857;-14.0097;-90;Bottom;R10
+13;;;12.3564;-2.55031;0;Bottom;TXT1
+14;;DIP (Dual Inline) [THT];36.5257;-26.7097;90;Bottom;ULN2803
+15;;THT;22.5557;-6.38968;-90;Bottom;J13
+16;;THT;12.3957;-33.0597;-90;Bottom;J7
+17;220;THT;46.6857;-14.0097;-90;Bottom;R1
+18;220;THT;39.0657;-14.0097;-90;Bottom;R4
+19;220;THT;18.7457;-14.0097;-90;Bottom;R11
+20;;THT;17.4757;-33.0597;-90;Bottom;J6
+21;;THT;35.2557;-6.38968;-90;Bottom;J11
+22;;THT;40.3357;-6.38968;-90;Bottom;J10
+23;;THT;45.4157;-6.38968;-90;Bottom;J9
+24;;THT;50.4957;-27.3447;0;Bottom;gnd
+25;;;50.3529;-35.6761;0;Bottom;IMG1
+26;220;THT;41.6057;-14.0097;-90;Bottom;R3
+27;220;THT;16.2057;-14.0097;-90;Bottom;R12
+28;;THT;30.1757;-33.0597;-90;Bottom;J4
+29;220;THT;13.6657;-14.0097;-90;Bottom;R13
+30;220;THT;44.1457;-14.0097;-90;Bottom;R2
+31;220;THT;6.04573;-14.0097;-90;Bottom;R16
+32;220;THT;28.9057;-14.0097;-90;Bottom;R8
+33;220;THT;11.1257;-14.0097;-90;Bottom;R14
+34;220;THT;31.4457;-14.0097;-90;Bottom;R7
+35;;THT;17.4757;-6.38968;-90;Bottom;J14
+36;;THT;35.2557;-33.0597;-90;Bottom;J3
+37;220;THT;36.5257;-14.0097;-90;Bottom;R5
+38;;THT;7.31573;-6.38968;-90;Bottom;J16
+39;220;THT;23.8257;-14.0097;-90;Bottom;R9
