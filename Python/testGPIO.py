@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys, time
+import RPi.GPIO as GPIO
 
 FPS = 20.0
 LOOP_PERIOD = 1.0/FPS
@@ -16,6 +17,12 @@ gpioVals = [[0]*TENS_DIM[1] for x in range(TENS_DIM[0])]
 lastChange = 0
 mLoc = 0
 
+GPIO.setmode(GPIO.BCM)
+for y in range(TENS_DIM[0]):
+    for x in range(TENS_DIM[1]):
+        GPIO.setup(GPIOS[y][x], GPIO.OUT)
+        GPIO.output(GPIOS[y][x], 0)
+
 def loop():
     global lastChange, mLoc
     now = time.time()
@@ -29,16 +36,15 @@ def loop():
         gpioVals[cy][cx] = 1
         print gpioVals
 
+lastLoop = 0
 while True:
     tensWaveVal = int(time.time()/TENS_PERIOD)%2
-    #TODO: update GPIOS
+    # update GPIOS
     for y in range(TENS_DIM[0]):
         for x in range(TENS_DIM[1]):
-            pass
-            # TODO: gpio.output(GPIO[y][x], gpioVals[y][x]*tensWaveVals)
+            GPIO.output(GPIOS[y][x], gpioVals[y][x]*tensWaveVals)
 
-    loopStart = time.time()
-    loop()
-    loopTime = time.time() - loopStart
-    time.sleep(max(LOOP_PERIOD - loopTime, 0))
-
+    now = time.time()
+    if (now-lastLoop > LOOP_PERIOD):
+        lastLoop = now
+        loop()
