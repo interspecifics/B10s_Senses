@@ -10,9 +10,10 @@ LOOP_PERIOD = 1.0/FPS
 TENS_FREQ = 80
 TENS_PERIOD = 1.0/TENS_FREQ
 
-GPIOS = [[4,17,27,22], [18,23,24,25], [5,6,13,19], [12,16,20,21]]
-TENS_DIM = (len(GPIOS),len(GPIOS[0]))
-gpioVals = [[0]*TENS_DIM[1] for x in range(TENS_DIM[0])]
+GPIOS = (4,17,27,22, 18,23,24,25, 5,6,13,19, 12,16,20,21)
+TENS_LEN = len(GPIOS)
+gpioVals = [[0]*TENS_LEN]
+TENS_DIM = (4, 4)
 
 def setup():
     global prevFrame, frame, video_capture, mDetector, mCascade
@@ -88,11 +89,8 @@ if __name__=="__main__":
     setup()
     while True:
         tensWaveVal = int(time.time()/TENS_PERIOD)%2
-        #TODO: update GPIOS
-        for y in range(TENS_DIM[0]):
-            for x in range(TENS_DIM[1]):
-                pass
-                # TODO: gpio.output(GPIO[y][x], gpioVals[y][x]*tensWaveVals)
+        # TODO: update GPIOS
+        # GPIO.output(GPIOS, tuple([tensWaveVal*v for v in gpioVals]))
 
         now = time.time()
         if (now-lastLoop > LOOP_PERIOD):
