@@ -11,7 +11,7 @@ TENS_PERIOD = 1.0/TENS_FREQ
 
 GPIOS = (4,17,27,22, 18,23,24,25, 5,6,13,19, 12,16,20,21)
 TENS_LEN = len(GPIOS)
-gpioVals = [[0]*TENS_LEN]
+gpioVals = [0]*TENS_LEN
 TENS_DIM = (4, 4)
 
 if(TENS_DIM[0]*TENS_DIM[1] > TENS_LEN):
@@ -32,7 +32,7 @@ def loop():
     if(now - lastChange > 0.5):
         lastChange = now
         mLoc = (mLoc + 1)%TENS_LEN
-        gpioVals = [[0]*TENS_LEN]
+        gpioVals = [0]*TENS_LEN
         gpioVals[mLoc] = 1
         print gpioVals
 
