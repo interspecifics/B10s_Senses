@@ -21,6 +21,7 @@ if(TENS_DIM[0]*TENS_DIM[1] > TENS_LEN):
 lastChange = 0
 mLoc = 0
 
+GPIO.cleanup()
 GPIO.setmode(GPIO.BCM)
 for pin in GPIOS:
     GPIO.setup(pin, GPIO.OUT)
@@ -38,7 +39,7 @@ def loop():
 
 lastLoop = 0
 while True:
-    tensWaveVal = int(time.time()/TENS_PERIOD)%2
+    tensWaveVal = int((time.time()/TENS_PERIOD)%2)
     GPIO.output(GPIOS, tuple([tensWaveVal*v for v in gpioVals]))
 
     now = time.time()
