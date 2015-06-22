@@ -84,6 +84,7 @@ def cleanUp():
     cv2.destroyAllWindows()
 
 if __name__=="__main__":
+    lastLoop = 0
     setup()
     while True:
         tensWaveVal = int(time.time()/TENS_PERIOD)%2
@@ -93,7 +94,7 @@ if __name__=="__main__":
                 pass
                 # TODO: gpio.output(GPIO[y][x], gpioVals[y][x]*tensWaveVals)
 
-        loopStart = time.time()
-        loop()
-        loopTime = time.time() - loopStart
-        time.sleep(max(LOOP_PERIOD - loopTime, 0))
+        now = time.time()
+        if (now-lastLoop > LOOP_PERIOD):
+            lastLoop = now
+            loop()
