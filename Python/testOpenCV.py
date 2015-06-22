@@ -12,43 +12,40 @@ TENS_PERIOD = 1.0/TENS_FREQ
 
 GPIOS = [[4,17,27,22], [18,23,24,25], [5,6,13,19], [12,16,20,21]]
 TENS_DIM = (len(GPIOS),len(GPIOS[0]))
-gpioVals = [[False]*TENS_DIM[1]]*TENS_DIM[0]
+gpioVals = [[0]*TENS_DIM[1] for x in range(TENS_DIM[0])]
 
-video_capture = cv2.VideoCapture(0)
-video_capture.set(3,320)
-video_capture.set(4,240)
+def setup():
+    global prevFrame, frame, video_capture, mDetector, mCascade
+    video_capture = cv2.VideoCapture(0)
+    video_capture.set(3,320)
+    video_capture.set(4,240)
 
-prevFrame = cv2.cvtColor(video_capture.read()[1], cv2.COLOR_RGB2GRAY)
-frame = cv2.cvtColor(video_capture.read()[1], cv2.COLOR_RGB2GRAY)
+    prevFrame = cv2.cvtColor(video_capture.read()[1], cv2.COLOR_RGB2GRAY)
+    frame = cv2.cvtColor(video_capture.read()[1], cv2.COLOR_RGB2GRAY)
 
-# Setup SimpleBlobDetector parameters.
-mParams = cv2.SimpleBlobDetector_Params()
-mParams.minThreshold = 10;
-mParams.maxThreshold = 32;
-mParams.filterByArea = True
-mParams.minArea = 32
-mParams.filterByCircularity = True
-mParams.minCircularity = 0.001
-mParams.filterByConvexity = True
-mParams.minConvexity = 0.001
-mParams.filterByInertia = True
-mParams.minInertiaRatio = 0.001
+    # Setup SimpleBlobDetector parameters.
+    mParams = cv2.SimpleBlobDetector_Params()
+    mParams.minThreshold = 10;
+    mParams.maxThreshold = 32;
+    mParams.filterByArea = True
+    mParams.minArea = 32
+    mParams.filterByCircularity = True
+    mParams.minCircularity = 0.001
+    mParams.filterByConvexity = True
+    mParams.minConvexity = 0.001
+    mParams.filterByInertia = True
+    mParams.minInertiaRatio = 0.001
 
-mDetector = cv2.SimpleBlobDetector(mParams)
-mCascade = None
-cascadeResult = None
+    mDetector = cv2.SimpleBlobDetector(mParams)
+    mCascade = None
 
-if len(sys.argv) > 1:
-    mCascade = cv2.CascadeClassifier(sys.argv[1])
-else:
-    print "Please provide a cascade file if you want to do face/body detection."
-
-def cleanUp():
-    video_capture.release()
-    cv2.destroyAllWindows()
+    if len(sys.argv) > 1:
+        mCascade = cv2.CascadeClassifier(sys.argv[1])
+    else:
+        print "Please provide a cascade file if you want to do face/body detection."
 
 def loop():
-    global prevFrame, frame
+    global prevFrame, frame, video_capture, mDetector, mCascade
     prevFrame = frame
     frameRGB = cv2.blur(video_capture.read()[1], (16,16))
     frame = cv2.cvtColor(frameRGB, cv2.COLOR_RGB2GRAY)
@@ -81,16 +78,22 @@ def loop():
         cleanUp()
         sys.exit(0)
 
-while True:
-    tensWaveVal = int(time.time()/TENS_PERIOD)%2
-    #TODO: update GPIOS
-    for y in range(TENS_DIM[0]):
-        for x in range(TENS_DIM[1]):
-            pass
-            # gpio.output(GPIO[y][x], gpioVals[y][x]*tensWaveVals)
+def cleanUp():
+    global video_capture
+    video_capture.release()
+    cv2.destroyAllWindows()
 
-    loopStart = time.time()
-    loop()
-    loopTime = time.time() - loopStart
-    time.sleep(max(LOOP_PERIOD - loopTime, 0))
+if __name__=="__main__":
+    setup()
+    while True:
+        tensWaveVal = int(time.time()/TENS_PERIOD)%2
+        #TODO: update GPIOS
+        for y in range(TENS_DIM[0]):
+            for x in range(TENS_DIM[1]):
+                pass
+                # TODO: gpio.output(GPIO[y][x], gpioVals[y][x]*tensWaveVals)
 
+        loopStart = time.time()
+        loop()
+        loopTime = time.time() - loopStart
+        time.sleep(max(LOOP_PERIOD - loopTime, 0))
