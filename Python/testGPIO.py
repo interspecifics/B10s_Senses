@@ -24,7 +24,7 @@ for pin in (POWS+GPIOS):
     GPIO.setup(pin, GPIO.OUT)
 
 def loop():
-    global lastChange, mLoc
+    global lastChange, mLoc, powVals, gpioVals
     now = time.time()
     if(now - lastChange > 2.0):
         lastChange = now
