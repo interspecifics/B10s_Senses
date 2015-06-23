@@ -41,6 +41,8 @@ def setup():
 
     mClient = OSCClient()
     mClient.connect( (SERVER_IP, SERVER_PORT) )
+    blobMessage = OSCMessage()
+    haarMessage = OSCMessage()
     blobMessage.setAddress(BLOB_ADDRESS)
     haarMessage.setAddress(HAAR_ADDRESS)
 
