@@ -139,8 +139,7 @@ def loop():
                 pass
 
     # Display the resulting frame
-    #img = cv2.drawKeypoints(diffFrameThresh, blobs, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-    #cv2.imshow('_', img)
+    #cv2.imshow('_', cv2.drawKeypoints(diffFrameThresh, blobs, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS))
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         cleanUp()
