@@ -3,6 +3,7 @@
 import cv2
 import sys, time
 import numpy as np
+from OSC import OSCClient, OSCMessage
 
 FPS = 20.0
 LOOP_PERIOD = 1.0/FPS
@@ -21,8 +22,18 @@ cascadeDetected = 0
 FPA = 0.75
 FPB = 1.0-FPA
 
+SERVER_IP = '127.0.0.1'
+SERVER_PORT = 1234
+MSG_ADDRESS = '/b10s/cv'
+
+mClient = None
+
 def setup():
-    global prevFrame, frame, video_capture, mDetector, mCascade
+    global prevFrame, frame, video_capture, mDetector, mCascade, mClient
+
+    mClient = OSCClient()
+    mClient.connect( (SERVER_IP, SERVER_PORT) )
+
     video_capture = cv2.VideoCapture(0)
     video_capture.set(3,320)
     video_capture.set(4,240)
@@ -88,7 +99,8 @@ def loop():
                 (s,x,y) = (max(w0,h0), x0, y0)
 
     (S,X,Y) = (FPA*S+FPB*s, FPA*X+FPB*x, FPA*Y+FPB*y)
-    # TODO: OSC
+    cascadeToSend = 1.0 if cascadeDetected > 1.0 else 0.0
+    mClient.send( OSCMessage(MSG_ADDRESS, [X,Y,S, cascadeToSend]) )
 
     # Display the resulting frame
     img = cv2.drawKeypoints(diffFrameThresh, blobs, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
