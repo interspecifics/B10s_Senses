@@ -10,10 +10,11 @@ LOOP_PERIOD = 1.0/FPS
 TENS_FREQ = 80
 TENS_PERIOD = 1.0/TENS_FREQ
 
-GPIOS = (4,17,27,22, 18,23,24,25, 5,6,13,19, 12,16,20,21)
+POWS = (4,27,18,24)
+GPIOS = (17,22,23,25)
 TENS_LEN = len(GPIOS)
-gpioVals = [[0]*TENS_LEN]
-TENS_DIM = (4, 4)
+powVals = [1]*TENS_LEN
+gpioVals = [0]*TENS_LEN
 
 def setup():
     global prevFrame, frame, video_capture, mDetector, mCascade

@@ -6,43 +6,41 @@ import RPi.GPIO as GPIO
 FPS = 20.0
 LOOP_PERIOD = 1.0/FPS
 
-TENS_FREQ = 80
+TENS_FREQ = 60
 TENS_PERIOD = 1.0/TENS_FREQ
 
-GPIOS = (4,17,27,22, 18,23,24,25, 5,6,13,19, 12,16,20,21)
-TENS_LEN = len(GPIOS)
-gpioVals = [0]*TENS_LEN
-TENS_DIM = (4, 4)
+POWS = (4,27,18,24)
+GPIOS = (17,22,23,25)
 
-if(TENS_DIM[0]*TENS_DIM[1] > TENS_LEN):
-    print "Something wrong with matrix dimensions. Check GPIO and TENS_DIM."
-    sys.exit(0)
+TENS_LEN = len(GPIOS)
+powVals = [1]*TENS_LEN
+gpioVals = [0]*TENS_LEN
 
 lastChange = 0
 mLoc = 0
 
-GPIO.cleanup()
 GPIO.setmode(GPIO.BCM)
-for pin in GPIOS:
+for pin in (POWS+GPIOS):
     GPIO.setup(pin, GPIO.OUT)
-    GPIO.output(pin, 0)
 
 def loop():
     global lastChange, mLoc
     now = time.time()
-    if(now - lastChange > 0.5):
+    if(now - lastChange > 2.0):
         lastChange = now
         mLoc = (mLoc + 1)%TENS_LEN
+        powVals = [1]*TENS_LEN
         gpioVals = [0]*TENS_LEN
+        powVals[mLoc] = 0
         gpioVals[mLoc] = 1
-        print gpioVals
 
 lastLoop = 0
 while True:
-    tensWaveVal = int((time.time()/TENS_PERIOD)%2)
+    now = time.time()
+    tensWaveVal = int((now/TENS_PERIOD)%2)
+    GPIO.output(POWS, tuple([tensWaveVal*v for v in powVals]))
     GPIO.output(GPIOS, tuple([tensWaveVal*v for v in gpioVals]))
 
-    now = time.time()
     if (now-lastLoop > LOOP_PERIOD):
         lastLoop = now
         loop()
