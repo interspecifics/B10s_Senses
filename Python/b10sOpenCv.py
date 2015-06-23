@@ -118,7 +118,8 @@ def loop():
         sys.exit(0)
 
 def cleanUp():
-    global video_capture
+    global video_capture, mClient
+    mClient.close()
     video_capture.release()
     cv2.destroyAllWindows()
 
