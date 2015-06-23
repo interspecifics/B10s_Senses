@@ -10,6 +10,8 @@ from picamera import PiCamera
 FPS = 20.0
 LOOP_PERIOD = 1.0/FPS
 
+CAM_RES = (160, 120)
+
 TENS_FREQ = 80
 TENS_PERIOD = 1.0/TENS_FREQ
 
@@ -47,7 +49,8 @@ def setup():
     haarMessage.setAddress(HAAR_ADDRESS)
 
     mCamera = PiCamera()
-    mCamera.resolution = (160, 120)
+    mCamera.resolution = CAM_RES
+    mCamera.framerate = 16
     mStream = PiRGBArray(mCamera)
     time.sleep(2.0)
 
@@ -102,7 +105,7 @@ def loop():
 
     (SB,XB,YB) = (FPA*SB+FPB*s, FPA*XB+FPB*x, FPA*YB+FPB*y)
     blobMessage.clearData()
-    blobMessage.append([XB,YB,SB])
+    blobMessage.append([XB/CAM_RES[0],YB/CAM_RES[1],SB])
 
     try:
         mClient.send( blobMessage )
@@ -129,7 +132,7 @@ def loop():
         if cascadeDetected > 1.0:
             (SH,XH,YH) = (FPA*SH+FPB*s, FPA*XH+FPB*x, FPA*YH+FPB*y)
             haarMessage.clearData()
-            haarMessage.append([xh,yh,sh])
+            haarMessage.append([XH/CAM_RES[0],YH/CAM_RES[1],SH])
             try:
                 mClient.send( haarMessage )
             except Exception as e:
