@@ -4,6 +4,8 @@ import cv2
 import sys, time
 import numpy as np
 from OSC import OSCClient, OSCMessage
+from picamera.array import PiRGBArray
+from picamera import PiCamera
 
 FPS = 20.0
 LOOP_PERIOD = 1.0/FPS
@@ -30,18 +32,25 @@ mClient = None
 mMessage = None
 
 def setup():
-    global prevFrame, frame, video_capture, mDetector, mCascade, mClient, mMessage
+    global prevFrame, frame, mDetector, mCascade, mClient, mMessage
+    global mCamera, rawCapture
 
     mClient = OSCClient()
     mClient.connect( (SERVER_IP, SERVER_PORT) )
     mMessage = OSCMessage(MSG_ADDRESS)
 
-    video_capture = cv2.VideoCapture(0)
-    video_capture.set(3,320)
-    video_capture.set(4,240)
+    mCamera = PiCamera()
+    mCamera.resolution = (640, 480)
+    mCamera.framerate = 48
+    rawCapture = PiRGBArray(mCamera, size=mCamera.resolution)
+    time.sleep(0.2)
 
-    prevFrame = cv2.cvtColor(video_capture.read()[1], cv2.COLOR_RGB2GRAY)
-    frame = cv2.cvtColor(video_capture.read()[1], cv2.COLOR_RGB2GRAY)
+    mCamera.capture(rawCapture, format="bgr")
+    rawFrame = rawCapture.array
+    rawCapture.truncate(0)
+
+    frame = cv2.cvtColor(cv2.blur(rawFrame, (16,16)), cv2.COLOR_RGB2GRAY)
+    prevFrame = frame
 
     # Setup SimpleBlobDetector parameters.
     mParams = cv2.SimpleBlobDetector_Params()
@@ -65,10 +74,16 @@ def setup():
         print "Please provide a cascade file if you want to do face/body detection."
 
 def loop():
-    global prevFrame, frame, video_capture, mDetector, mCascade, mClient, mMessage
+    global prevFrame, frame, mDetector, mCascade, mClient, mMessage
+    global mCamera, rawCapture
     global S,X,Y, cascadeDetected
+
+    mCamera.capture(rawCapture, format="bgr")
+    rawFrame = rawCapture.array
+    rawCapture.truncate(0)
+
     prevFrame = frame
-    frameRGB = cv2.blur(video_capture.read()[1], (16,16))
+    frameRGB = cv2.blur(rawFrame, (16,16))
     frame = cv2.cvtColor(frameRGB, cv2.COLOR_RGB2GRAY)
     diffFrame = cv2.absdiff(frame, prevFrame)
 
@@ -118,9 +133,8 @@ def loop():
         sys.exit(0)
 
 def cleanUp():
-    global video_capture, mClient
+    global mClient
     mClient.close()
-    video_capture.release()
     cv2.destroyAllWindows()
 
 if __name__=="__main__":
