@@ -27,12 +27,14 @@ SERVER_PORT = 1234
 MSG_ADDRESS = '/b10s/cv'
 
 mClient = None
+mMessage = None
 
 def setup():
-    global prevFrame, frame, video_capture, mDetector, mCascade, mClient
+    global prevFrame, frame, video_capture, mDetector, mCascade, mClient, mMessage
 
     mClient = OSCClient()
     mClient.connect( (SERVER_IP, SERVER_PORT) )
+    mMessage = OSCMessage(MSG_ADDRESS)
 
     video_capture = cv2.VideoCapture(0)
     video_capture.set(3,320)
@@ -63,7 +65,7 @@ def setup():
         print "Please provide a cascade file if you want to do face/body detection."
 
 def loop():
-    global prevFrame, frame, video_capture, mDetector, mCascade
+    global prevFrame, frame, video_capture, mDetector, mCascade, mClient, mMessage
     global S,X,Y, cascadeDetected
     prevFrame = frame
     frameRGB = cv2.blur(video_capture.read()[1], (16,16))
@@ -100,8 +102,10 @@ def loop():
 
     (S,X,Y) = (FPA*S+FPB*s, FPA*X+FPB*x, FPA*Y+FPB*y)
     cascadeToSend = 1.0 if cascadeDetected > 1.0 else 0.0
+    mMessage.clearData()
+    mMessage.append([X,Y,S, cascadeToSend])
     try:
-        mClient.send( OSCMessage(MSG_ADDRESS, [X,Y,S, cascadeToSend]) )
+        mClient.send( mMessage )
     except Exception as e:
         pass
 
