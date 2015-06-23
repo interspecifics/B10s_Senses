@@ -16,6 +16,11 @@ TENS_LEN = len(GPIOS)
 powVals = [1]*TENS_LEN
 gpioVals = [0]*TENS_LEN
 
+(S,X,Y) = (0,0,0)
+cascadeDetected = 0
+FPA = 0.75
+FPB = 1.0-FPA
+
 def setup():
     global prevFrame, frame, video_capture, mDetector, mCascade
     video_capture = cv2.VideoCapture(0)
@@ -48,6 +53,7 @@ def setup():
 
 def loop():
     global prevFrame, frame, video_capture, mDetector, mCascade
+    global S,X,Y, cascadeDetected
     prevFrame = frame
     frameRGB = cv2.blur(video_capture.read()[1], (16,16))
     frame = cv2.cvtColor(frameRGB, cv2.COLOR_RGB2GRAY)
@@ -55,8 +61,13 @@ def loop():
 
     ret, diffFrameThresh = cv2.threshold(diffFrame, 32, 255, cv2.THRESH_BINARY_INV)
     blobs = mDetector.detect(diffFrameThresh)
-    print len(blobs)
-    # TODO: get biggest blob size,x,y
+
+    (s,x,y) = (0,0,0)
+    # get biggest blob (size,x,y)
+    for blob in blobs:
+        s0 = blob.size
+        if(s0 > s):
+            (s,(x,y)) = (s0, blob.pt)
 
     if mCascade is not None:
         cascadeResult = mCascade.detectMultiScale(
@@ -66,11 +77,18 @@ def loop():
             minSize=(30, 30),
             flags=cv2.cv.CV_HAAR_SCALE_IMAGE
         )
-        # TODO: get detected size,x,y
 
-        # Draw a rectangle around the faces
-        for (x, y, w, h) in cascadeResult:
-            cv2.rectangle(frameRGB, (x, y), (x+w, y+h), (0, 255, 0), 2)
+        # get cascade detector results and update (size, x, y)
+        cascadeDetected *= 0.9
+        if len(cascadeResult) > 0:
+            (s,x,y) = (0,0,0)
+            cascadeDetected = 3.0
+        for (x0, y0, w0, h0) in cascadeResult:
+            if(max(w0,h0) > s):
+                (s,x,y) = (max(w0,h0), x0, y0)
+
+    (S,X,Y) = (FPA*S+FPB*s, FPA*X+FPB*x, FPA*Y+FPB*y)
+    # TODO: OSC
 
     # Display the resulting frame
     img = cv2.drawKeypoints(diffFrameThresh, blobs, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
