@@ -25,6 +25,7 @@ FPA = 0.75
 FPB = 1.0-FPA
 
 SERVER_IP = '127.0.0.1'
+SERVER_IP = '192.168.0.4'
 SERVER_PORT = 1234
 MSG_ADDRESS = '/b10s/cv'
 
@@ -33,33 +34,29 @@ mMessage = None
 
 def setup():
     global prevFrame, frame, mDetector, mCascade, mClient, mMessage
-    global mCamera, rawCapture
+    global mCamera, mStream
 
     mClient = OSCClient()
     mClient.connect( (SERVER_IP, SERVER_PORT) )
     mMessage = OSCMessage(MSG_ADDRESS)
 
     mCamera = PiCamera()
-    mCamera.resolution = (640, 480)
-    mCamera.framerate = 48
-    rawCapture = PiRGBArray(mCamera, size=mCamera.resolution)
-    time.sleep(0.2)
+    mCamera.resolution = (160, 120)
+    mStream = PiRGBArray(mCamera)
+    time.sleep(2.0)
 
-    mCamera.capture(rawCapture, format="bgr")
-    rawFrame = rawCapture.array
-    rawCapture.truncate(0)
-
-    frame = cv2.cvtColor(cv2.blur(rawFrame, (16,16)), cv2.COLOR_RGB2GRAY)
+    mCamera.capture(mStream, format="bgr")
+    frame = cv2.blur(cv2.cvtColor(mStream.array, cv2.COLOR_RGB2GRAY), (16,16))
     prevFrame = frame
+
+    mStream.truncate(0)
 
     # Setup SimpleBlobDetector parameters.
     mParams = cv2.SimpleBlobDetector_Params()
-    mParams.minThreshold = 10;
+    mParams.minThreshold = 16;
     mParams.maxThreshold = 32;
     mParams.filterByArea = True
-    mParams.minArea = 32
-    mParams.filterByCircularity = True
-    mParams.minCircularity = 0.001
+    mParams.minArea = 64
     mParams.filterByConvexity = True
     mParams.minConvexity = 0.001
     mParams.filterByInertia = True
@@ -75,19 +72,19 @@ def setup():
 
 def loop():
     global prevFrame, frame, mDetector, mCascade, mClient, mMessage
-    global mCamera, rawCapture
+    global mCamera, mStream
     global S,X,Y, cascadeDetected
 
-    mCamera.capture(rawCapture, format="bgr")
-    rawFrame = rawCapture.array
-    rawCapture.truncate(0)
-
     prevFrame = frame
-    frameRGB = cv2.blur(rawFrame, (16,16))
-    frame = cv2.cvtColor(frameRGB, cv2.COLOR_RGB2GRAY)
+
+    mCamera.capture(mStream, format="bgr", use_video_port=True)
+    frameU = cv2.cvtColor(mStream.array, cv2.COLOR_RGB2GRAY)
+    frame = cv2.blur(frameU, (16,16))
     diffFrame = cv2.absdiff(frame, prevFrame)
+    mStream.truncate(0)
 
     ret, diffFrameThresh = cv2.threshold(diffFrame, 32, 255, cv2.THRESH_BINARY_INV)
+    blobs = []
     blobs = mDetector.detect(diffFrameThresh)
 
     (s,x,y) = (0,0,0)
@@ -99,10 +96,10 @@ def loop():
 
     if mCascade is not None:
         cascadeResult = mCascade.detectMultiScale(
-            frame,
+            frameU,
             scaleFactor=1.1,
             minNeighbors=5,
-            minSize=(30, 30),
+            minSize=(16, 16),
             flags=cv2.cv.CV_HAAR_SCALE_IMAGE
         )
 
@@ -119,14 +116,15 @@ def loop():
     cascadeToSend = 1.0 if cascadeDetected > 1.0 else 0.0
     mMessage.clearData()
     mMessage.append([X,Y,S, cascadeToSend])
+
     try:
         mClient.send( mMessage )
     except Exception as e:
         pass
 
     # Display the resulting frame
-    img = cv2.drawKeypoints(diffFrameThresh, blobs, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-    cv2.imshow('_', img)
+    #img = cv2.drawKeypoints(diffFrameThresh, blobs, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+    #cv2.imshow('_', img)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         cleanUp()
@@ -149,3 +147,4 @@ if __name__=="__main__":
         if (now-lastLoop > LOOP_PERIOD):
             lastLoop = now
             loop()
+            print "%s"%(1.0/(time.time()-lastLoop))
