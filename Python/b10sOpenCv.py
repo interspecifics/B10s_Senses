@@ -19,7 +19,8 @@ TENS_LEN = len(GPIOS)
 powVals = [1]*TENS_LEN
 gpioVals = [0]*TENS_LEN
 
-(S,X,Y) = (0,0,0)
+(SB,XB,YB) = (0,0,0)
+(SH,XH,YH) = (0,0,0)
 cascadeDetected = 0
 FPA = 0.75
 FPB = 1.0-FPA
@@ -27,18 +28,21 @@ FPB = 1.0-FPA
 SERVER_IP = '127.0.0.1'
 SERVER_IP = '192.168.0.4'
 SERVER_PORT = 1234
-MSG_ADDRESS = '/b10s/cv'
+BLOB_ADDRESS = '/b10s/blob'
+HAAR_ADDRESS = '/b10s/haar'
 
 mClient = None
-mMessage = None
+blobMessage = None
+haarMessage = None
 
 def setup():
-    global prevFrame, frame, mDetector, mCascade, mClient, mMessage
+    global prevFrame, frame, mDetector, mCascade, mClient, blobMessage, haarMessage
     global mCamera, mStream
 
     mClient = OSCClient()
     mClient.connect( (SERVER_IP, SERVER_PORT) )
-    mMessage = OSCMessage(MSG_ADDRESS)
+    blobMessage.setAddress(BLOB_ADDRESS)
+    haarMessage.setAddress(HAAR_ADDRESS)
 
     mCamera = PiCamera()
     mCamera.resolution = (160, 120)
@@ -71,9 +75,9 @@ def setup():
         print "Please provide a cascade file if you want to do face/body detection."
 
 def loop():
-    global prevFrame, frame, mDetector, mCascade, mClient, mMessage
+    global prevFrame, frame, mDetector, mCascade, mClient, blobMessage, haarMessage
     global mCamera, mStream
-    global S,X,Y, cascadeDetected
+    global SH,XH,YH, SB,XB,YB, cascadeDetected
 
     prevFrame = frame
 
@@ -94,6 +98,15 @@ def loop():
         if(s0 > s):
             (s,(x,y)) = (s0, blob.pt)
 
+    (SB,XB,YB) = (FPA*SB+FPB*s, FPA*XB+FPB*x, FPA*YB+FPB*y)
+    blobMessage.clearData()
+    blobMessage.append([XB,YB,SB])
+
+    try:
+        mClient.send( blobMessage )
+    except Exception as e:
+        pass
+
     if mCascade is not None:
         cascadeResult = mCascade.detectMultiScale(
             frameU,
@@ -104,23 +117,21 @@ def loop():
         )
 
         # get cascade detector results and update (size, x, y)
-        cascadeDetected *= 0.9
+        cascadeDetected *= 0.8
+        (s,x,y) = (0,0,0)
         if len(cascadeResult) > 0:
-            (s,x,y) = (0,0,0)
-            cascadeDetected = 3.0
+            cascadeDetected = 2.0
         for (x0, y0, w0, h0) in cascadeResult:
             if(max(w0,h0) > s):
                 (s,x,y) = (max(w0,h0), x0, y0)
-
-    (S,X,Y) = (FPA*S+FPB*s, FPA*X+FPB*x, FPA*Y+FPB*y)
-    cascadeToSend = 1.0 if cascadeDetected > 1.0 else 0.0
-    mMessage.clearData()
-    mMessage.append([X,Y,S, cascadeToSend])
-
-    try:
-        mClient.send( mMessage )
-    except Exception as e:
-        pass
+        if cascadeDetected > 1.0:
+            (SH,XH,YH) = (FPA*SH+FPB*s, FPA*XH+FPB*x, FPA*YH+FPB*y)
+            haarMessage.clearData()
+            haarMessage.append([xh,yh,sh])
+            try:
+                mClient.send( haarMessage )
+            except Exception as e:
+                pass
 
     # Display the resulting frame
     #img = cv2.drawKeypoints(diffFrameThresh, blobs, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
