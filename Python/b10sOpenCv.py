@@ -100,7 +100,10 @@ def loop():
 
     (S,X,Y) = (FPA*S+FPB*s, FPA*X+FPB*x, FPA*Y+FPB*y)
     cascadeToSend = 1.0 if cascadeDetected > 1.0 else 0.0
-    mClient.send( OSCMessage(MSG_ADDRESS, [X,Y,S, cascadeToSend]) )
+    try:
+        mClient.send( OSCMessage(MSG_ADDRESS, [X,Y,S, cascadeToSend]) )
+    except Exception as e:
+        pass
 
     # Display the resulting frame
     img = cv2.drawKeypoints(diffFrameThresh, blobs, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
