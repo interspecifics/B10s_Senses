@@ -39,8 +39,9 @@ blobMessage = None
 haarMessage = None
 
 def setup():
-    global prevFrame, frame, mDetector, mCascade, mClient, blobMessage, haarMessage
-    global mCamera, mStream
+    global prevFrame, frame, mCamera, mStream
+    global mDetector, mCascade, blobMessage, haarMessage, mClient
+    global POWS, GPIOS, powVals, gpioVals
 
     mClient = OSCClient()
     mClient.connect( (SERVER_IP, SERVER_PORT) )
@@ -48,6 +49,10 @@ def setup():
     haarMessage = OSCMessage()
     blobMessage.setAddress(BLOB_ADDRESS)
     haarMessage.setAddress(HAAR_ADDRESS)
+
+    GPIO.setmode(GPIO.BCM)
+    for pin in (POWS+GPIOS):
+        GPIO.setup(pin, GPIO.OUT)
 
     mCamera = PiCamera()
     mCamera.resolution = CAM_RES
@@ -81,8 +86,9 @@ def setup():
         print "Please provide a cascade file if you want to do face/body detection."
 
 def loop():
-    global prevFrame, frame, mDetector, mCascade, mClient, blobMessage, haarMessage
-    global mCamera, mStream
+    global prevFrame, frame, mCamera, mStream
+    global mDetector, mCascade, blobMessage, haarMessage, mClient
+    global POWS, GPIOS, powVals, gpioVals
     global SH,XH,YH, SB,XB,YB, cascadeDetected
 
     prevFrame = frame
@@ -148,6 +154,7 @@ def loop():
 
 def cleanUp():
     global mClient
+    GPIO.cleanup()
     mClient.close()
     cv2.destroyAllWindows()
 
