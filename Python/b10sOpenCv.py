@@ -30,7 +30,7 @@ FPA = 0.75
 FPB = 1.0-FPA
 
 SERVER_IP = '127.0.0.1'
-SERVER_IP = '192.168.0.4'
+SERVER_IP = '192.168.1.217'
 SERVER_PORT = 1234
 BLOB_ADDRESS = '/b10s/blob'
 HAAR_ADDRESS = '/b10s/haar'
@@ -112,22 +112,23 @@ def loop():
             (s,(x,y)) = (s0, blob.pt)
 
     (SB,XB,YB) = (FPA*SB+FPB*s, FPA*XB+FPB*x, FPA*YB+FPB*y)
-    blobMessage.clearData()
-    blobMessage.append([XB/CAM_RES[0],YB/CAM_RES[1],SB])
+    if (SB > 0.5):
+        blobMessage.clearData()
+        blobMessage.append([XB/CAM_RES[0],YB/CAM_RES[1],SB])
+        try:
+            mClient.send( blobMessage )
+        except Exception as e:
+            pass
 
-    try:
-        mClient.send( blobMessage )
-    except Exception as e:
-        pass
-
-    if (mCascade is not None) and (int((time.time()%5) == 0)):
-        cascadeResult = mCascade.detectMultiScale(
-            frameU,
-            scaleFactor=1.1,
-            minNeighbors=5,
-            minSize=(16, 16),
-            flags=cv2.cv.CV_HAAR_SCALE_IMAGE
-        )
+    if mCascade is not None:
+        cascadeResult = []
+        if (time.time()%5 > 4):
+            cascadeResult = mCascade.detectMultiScale(
+                frameU,
+                scaleFactor=1.1,
+                minNeighbors=5,
+                minSize=(16, 16),
+                flags=cv2.cv.CV_HAAR_SCALE_IMAGE)
 
         # get cascade detector results and update (size, x, y)
         cascadeDetected *= 0.8
@@ -135,8 +136,8 @@ def loop():
         if len(cascadeResult) > 0:
             cascadeDetected = 2.0
         for (x0, y0, w0, h0) in cascadeResult:
-            if(max(w0,h0) > s):
-                (s,x,y) = (max(w0,h0), x0, y0)
+            if(w0 > s):
+                (s,x,y) = (w0, x0, y0)
         if cascadeDetected > 1.0:
             (SH,XH,YH) = (FPA*SH+FPB*s, FPA*XH+FPB*x, FPA*YH+FPB*y)
             haarMessage.clearData()
@@ -177,6 +178,12 @@ if __name__=="__main__":
         while True:
             GPIO.output(POWS, tuple([tensWaveVal*v for v in powVals]))
             GPIO.output(GPIOS, tuple([tensWaveVal*v for v in gpioVals]))
+
+            powVals = [1]*TENS_LEN
+            gpioVals = [0]*TENS_LEN
+            ci = int((time.time()/2)%4)
+            powVals[ci] = 0
+            gpioVals[ci] = 1
 
             now = time.time()
             if (now-lastLoop > LOOP_PERIOD):
