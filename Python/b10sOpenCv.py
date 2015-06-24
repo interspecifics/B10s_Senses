@@ -4,6 +4,7 @@ import cv2
 import sys, time
 import numpy as np
 import RPi.GPIO as GPIO
+from threading import Thread
 from OSC import OSCClient, OSCMessage
 from picamera.array import PiRGBArray
 from picamera import PiCamera
@@ -160,15 +161,28 @@ def cleanUp():
 
 if __name__=="__main__":
     lastLoop = 0
+    tensWaveVal = 0
+    calcTens = True
+
+    def upTWV():
+        while(calcTens is True):
+            tensWaveVal = int((time.time()/TENS_PERIOD)%2)
+
+    t = Thread(target=upTWV)
+    t.start()
     setup()
-    while True:
-        tensWaveVal = int((time.time()/TENS_PERIOD)%2)
+    try:
+        while True:
+            GPIO.output(POWS, tuple([tensWaveVal*v for v in powVals]))
+            GPIO.output(GPIOS, tuple([tensWaveVal*v for v in gpioVals]))
 
-        GPIO.output(POWS, tuple([tensWaveVal*v for v in powVals]))
-        GPIO.output(GPIOS, tuple([tensWaveVal*v for v in gpioVals]))
-
-        now = time.time()
-        if (now-lastLoop > LOOP_PERIOD):
-            lastLoop = now
-            loop()
-            print "%s"%(1.0/(time.time()-lastLoop))
+            now = time.time()
+            if (now-lastLoop > LOOP_PERIOD):
+                lastLoop = now
+                loop()
+                print "%s"%(1.0/(time.time()-lastLoop))
+    except Exception as e:
+        cleanUp()
+        calcTens = False
+        time.sleep(1)
+        t.join()
