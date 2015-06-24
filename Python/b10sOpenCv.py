@@ -120,7 +120,7 @@ def loop():
     except Exception as e:
         pass
 
-    if mCascade is not None:
+    if (mCascade is not None) and (int((time.time()%5) == 0):
         cascadeResult = mCascade.detectMultiScale(
             frameU,
             scaleFactor=1.1,
