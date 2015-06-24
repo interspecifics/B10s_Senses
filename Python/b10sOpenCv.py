@@ -165,8 +165,10 @@ if __name__=="__main__":
     calcTens = True
 
     def upTWV():
+        global tensWaveVal
         while(calcTens is True):
             tensWaveVal = int((time.time()/TENS_PERIOD)%2)
+            time.sleep(TENS_PERIOD)
 
     t = Thread(target=upTWV)
     t.start()
@@ -185,4 +187,4 @@ if __name__=="__main__":
         cleanUp()
         calcTens = False
         time.sleep(1)
-        t.join()
+        t.join(1)
