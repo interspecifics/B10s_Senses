@@ -104,6 +104,9 @@ def loop():
     blobs = []
     blobs = mDetector.detect(diffFrameThresh)
 
+    powVals = [1]*TENS_LEN
+    gpioVals = [0]*TENS_LEN
+
     (s,x,y) = (0,0,0)
     # get biggest blob (size,x,y)
     for blob in blobs:
@@ -113,6 +116,11 @@ def loop():
 
     (SB,XB,YB) = (FPA*SB+FPB*s, FPA*XB+FPB*x, FPA*YB+FPB*y)
     if (SB > 0.5):
+        # set up pulses
+        pulseLocationIndex = int(XB*2)+2*int(YB*2)
+        powVals[pulseLocationIndex] = 0
+        gpioVals[pulseLocationIndex] = 1
+
         blobMessage.clearData()
         blobMessage.append([XB/CAM_RES[0],YB/CAM_RES[1],SB])
         try:
