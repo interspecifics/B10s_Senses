@@ -155,7 +155,7 @@ if __name__=="__main__":
     lastLoop = 0
     setup()
     while True:
-        tensWaveVal = int(time.time()/TENS_PERIOD)%2
+        tensWaveVal = int((time.time()/TENS_PERIOD)%2)
 
         GPIO.output(POWS, tuple([tensWaveVal*v for v in powVals]))
         GPIO.output(GPIOS, tuple([tensWaveVal*v for v in gpioVals]))
