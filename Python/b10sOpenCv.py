@@ -29,8 +29,8 @@ cascadeDetected = 0
 FPA = 0.75
 FPB = 1.0-FPA
 
-SERVER_IP = '127.0.0.1'
 SERVER_IP = '192.168.1.217'
+SERVER_IP = '127.0.0.1'
 SERVER_PORT = 1234
 BLOB_ADDRESS = '/b10s/blob'
 HAAR_ADDRESS = '/b10s/haar'
@@ -117,12 +117,13 @@ def loop():
     (SB,XB,YB) = (FPA*SB+FPB*s, FPA*XB+FPB*x, FPA*YB+FPB*y)
     if (SB > 0.5):
         # set up pulses
-        pulseLocationIndex = int(XB*2)+2*int(YB*2)
+        (XBN, YBN) = (XB/CAM_RES[0], YB/CAM_RES[1])
+        pulseLocationIndex = int(XBN*2)+2*int(YBN*2)
         powVals[pulseLocationIndex] = 0
         gpioVals[pulseLocationIndex] = 1
 
         blobMessage.clearData()
-        blobMessage.append([XB/CAM_RES[0],YB/CAM_RES[1],SB])
+        blobMessage.append([XBN,YBN,SB])
         try:
             mClient.send( blobMessage )
         except Exception as e:
@@ -187,18 +188,13 @@ if __name__=="__main__":
             GPIO.output(POWS, tuple([tensWaveVal*v for v in powVals]))
             GPIO.output(GPIOS, tuple([tensWaveVal*v for v in gpioVals]))
 
-            powVals = [1]*TENS_LEN
-            gpioVals = [0]*TENS_LEN
-            ci = int((time.time()/2)%4)
-            powVals[ci] = 0
-            gpioVals[ci] = 1
-
             now = time.time()
             if (now-lastLoop > LOOP_PERIOD):
                 lastLoop = now
                 loop()
                 print "%s"%(1.0/(time.time()-lastLoop))
     except Exception as e:
+        print e
         cleanUp()
         calcTens = False
         time.sleep(1)
