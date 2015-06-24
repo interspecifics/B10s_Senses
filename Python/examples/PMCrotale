@@ -1,0 +1,23 @@
+import sc
+import time
+import OSCdef
+
+print 'Iniciando........'
+
+
+sc.start( verbose=1, spew=1)
+
+PMCrotale = sc.Synth( "PMCrotale" )
+
+PMCrotale.midi = rrand(48, 72).round(1)
+
+PMCrotale.tone = rrand(1, 6)
+
+time.sleep(5)
+
+PMCrotale = free()
+
+sc.quit()
+
+
+print 'seeya world! ...........'
