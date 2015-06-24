@@ -1,48 +1,49 @@
 
-""" receiving OSC with pyOSC
-https://trac.v2.nl/wiki/pyOSC
-example by www.ixi-audio.net based on pyOSC documentation
-
-this is a very basic example, for detailed info on pyOSC functionality check the OSC.py file
-or run pydoc pyOSC.py. you can also get the docs by opening a python shell and doing
->>> import OSC
->>> help(OSC)
-"""
-
-
-import OSC
+import sc
 import time, threading
+import OSC
 
 
-
-# tupple with ip, port. i dont use the () but maybe you want -> send_address = ('127.0.0.1', 9000)
 receive_address = 'localhost', 11112
-
-
-# OSC Server. there are three different types of server.
 s = OSC.OSCServer(receive_address) # basic
-##s = OSC.ThreadingOSCServer(receive_address) # threading
-##s = OSC.ForkingOSCServer(receive_address) # forking
-
-
-
-# this registers a 'default' handler (for unmatched messages),
-# an /'error' handler, an '/info' handler.
-# And, if the client supports it, a '/subscribe' & '/unsubscribe' handler
 s.addDefaultHandlers()
 
+xb = 0
+yb = 0
+sb = 0
+xh = 0
+yh = 0
+sh = 0
 
 
-# define a message-handler function for the server to call.
-def printing_handler(addr, tags, stuff, source):
+def blob_handler(addr, tags, stuff, source):
+    global xb, yb, sb
     print "---"
-    print "received new osc msg from %s" % OSC.getUrlStr(source)
-    print "with addr : %s" % addr
-    print "typetags %s" % tags
-    print "data %s" % stuff
+    print "xb %s" % stuff[0]
+    print "yb %s" % stuff[1]
+    print "sb %s" % stuff[2]
     print "---"
+    xb = stuff[0]
+    yb = stuff[1]
+    sb = stuff[2]
 
-s.addMsgHandler("/print", printing_handler) # adding our function
+
+
+def haar_handler(addr, tags, stuff, source):
+    global xh, yh, sh
+    print "---"
+    print "xh %s" % stuff[0]
+    print "yh %s" % stuff[1]
+    print "sh %s" % stuff[2]
+    print "---"
+    xh = stuff[0]
+    yh = stuff[1]
+    sh = stuff[2]
+
+
+s.addMsgHandler("/b10s/blob",  blob_handler) # adding our function
+s.addMsgHandler("/b10s/haar", haar_handler) # adding our function
+
 
 
 # just checking which handlers we have added
@@ -55,11 +56,17 @@ for addr in s.getOSCAddressSpace():
 print "\nStarting OSCServer. Use ctrl-C to quit."
 st = threading.Thread( target = s.serve_forever )
 st.start()
+sc.start(spew=1)
+pulseTest = sc.Synth( "pulseTest" )
 
 
 try :
-    while 1 :
+    while True :
         time.sleep(5)
+        pulseTest.maxPartial = xb
+        pulseTest.fund = yb
+        pulseTest.ampHz = sb
+
 
 except KeyboardInterrupt :
     print "\nClosing OSCServer."

@@ -2,7 +2,7 @@ NetAddr.localAddr
 
 (
 SynthDef.new(\pulseTest, {
-	arg ampHz=4, fund=40, maxPartial=4, width=0.5;
+	arg ampHz=1.8, fund=20, maxPartial=2, width=0.5;
 	var amp1, amp2,  freq1, freq2, sig1, sig2;
 	amp1 = LFPulse.kr (ampHz,0,0.12) * 0.75;
 	amp2 = LFPulse.kr (ampHz,0.5,0.12) * 0.75;
@@ -16,7 +16,7 @@ SynthDef.new(\pulseTest, {
 	sig2 = FreeVerb.ar(sig2, 0.7, 0.8, 0.25);
 	Out.ar(0, sig1);
 	Out.ar(1,sig2);
-}).add;
+}).load(s);
 )
 
 (
@@ -27,11 +27,14 @@ OSCdef('pdlistener',{
 )
 
 y = Synth.new(\pulseTest);
-y.set(\ampHz, 0.3);
-y.set(\fund, 10);
-y.set(\maxPartial, 8);
-y.set(\width,1.4);
+y.set(\ampHz, 4.8);
+y.set(\fund, 20);
+y.set(\maxPartial, 9);
+y.set(\width,0.4);
 y.free;
 
 s.quit;
 s.boot;
+
+
+
