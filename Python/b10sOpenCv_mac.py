@@ -52,7 +52,7 @@ def setup():
     video_capture.set(3,CAM_RES[0])
     video_capture.set(4,CAM_RES[1])
 
-    frame = cv2.blur(cv2.cvtColor(video_capture.read()[1], cv2.COLOR_RGB2GRAY), (16,16))
+    frame = cv2.blur(cv2.cvtColor(video_capture.read()[1], cv2.COLOR_RGB2GRAY), (4,4))
     prevFrame = frame
 
 
@@ -84,7 +84,7 @@ def loop():
     prevFrame = frame
 
     frameU = cv2.cvtColor(video_capture.read()[1], cv2.COLOR_RGB2GRAY)
-    frame = cv2.blur(frameU, (16,16))
+    frame = cv2.blur(frameU, (4,4))
     diffFrame = cv2.absdiff(frame, prevFrame)
 
     ret, diffFrameThresh = cv2.threshold(diffFrame, 32, 255, cv2.THRESH_BINARY_INV)
@@ -95,14 +95,14 @@ def loop():
     gpioVals = [0]*TENS_LEN
 
     (s,x,y) = (0,0,0)
-    # get biggest blob (size,x,y)
+    numBlobs = len(blobs)
+    # average blobs
     for blob in blobs:
-        s0 = blob.size
-        if(s0 > s):
-            (s,(x,y)) = (s0, blob.pt)
+        (s,x,y) = (s+blob.size, x+blob.pt[0], y+blob.pt[1])
 
-    (SB,XB,YB) = (FPA*SB+FPB*s, FPA*XB+FPB*x, FPA*YB+FPB*y)
-    if (SB > 0.5):
+    if (numBlobs > 0):
+        (s,x,y) = ((s/numBlobs), x/numBlobs, y/numBlobs)
+        (SB,XB,YB) = (FPA*SB+FPB*s, FPA*XB+FPB*x, FPA*YB+FPB*y)
         # set up pulses
         (XBN, YBN) = (XB/CAM_RES[0], YB/CAM_RES[1])
         pulseLocationIndex = int(XBN*2)+2*int(YBN*2)

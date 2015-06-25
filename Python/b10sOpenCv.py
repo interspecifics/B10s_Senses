@@ -26,7 +26,7 @@ gpioVals = [0]*TENS_LEN
 (SB,XB,YB) = (0,0,0)
 (SH,XH,YH) = (0,0,0)
 cascadeDetected = 0
-FPA = 0.75
+FPA = 0.5
 FPB = 1.0-FPA
 
 SERVER_IP = '192.168.1.217'
@@ -62,7 +62,7 @@ def setup():
     time.sleep(2.0)
 
     mCamera.capture(mStream, format="bgr")
-    frame = cv2.blur(cv2.cvtColor(mStream.array, cv2.COLOR_RGB2GRAY), (16,16))
+    frame = cv2.blur(cv2.cvtColor(mStream.array, cv2.COLOR_RGB2GRAY), (4,4))
     prevFrame = frame
 
     mStream.truncate(0)
@@ -96,7 +96,7 @@ def loop():
 
     mCamera.capture(mStream, format="bgr", use_video_port=True)
     frameU = cv2.cvtColor(mStream.array, cv2.COLOR_RGB2GRAY)
-    frame = cv2.blur(frameU, (16,16))
+    frame = cv2.blur(frameU, (4,4))
     diffFrame = cv2.absdiff(frame, prevFrame)
     mStream.truncate(0)
 
@@ -108,14 +108,14 @@ def loop():
     gpioVals = [0]*TENS_LEN
 
     (s,x,y) = (0,0,0)
-    # get biggest blob (size,x,y)
+    numBlobs = len(blobs)
+    # average blobs
     for blob in blobs:
-        s0 = blob.size
-        if(s0 > s):
-            (s,(x,y)) = (s0, blob.pt)
+        (s,x,y) = (s+blob.size, x+blob.pt[0], y+blob.pt[1])
 
-    (SB,XB,YB) = (FPA*SB+FPB*s, FPA*XB+FPB*x, FPA*YB+FPB*y)
-    if (SB > 0.5):
+    if (numBlobs > 0):
+        (s,x,y) = ((s/numBlobs), x/numBlobs, y/numBlobs)
+        (SB,XB,YB) = (FPA*SB+FPB*s, FPA*XB+FPB*x, FPA*YB+FPB*y)
         # set up pulses
         (XBN, YBN) = (XB/CAM_RES[0], YB/CAM_RES[1])
         pulseLocationIndex = int(XBN*2)+2*int(YBN*2)
