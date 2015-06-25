@@ -73,8 +73,9 @@ def setup():
         GPIO.setup(pin, GPIO.OUT)
 
     mCamera = Camera(CAM_RES)
+    mCamera.update()
 
-    frame = cv2.blur(cv2.cvtColor(mCamera.getFrame(), cv2.COLOR_RGB2GRAY), (4,4))
+    frame = cv2.blur(cv2.cvtColor(mCamera.frame, cv2.COLOR_RGB2GRAY), (4,4))
     prevFrame = frame
 
     # Setup SimpleBlobDetector parameters.
@@ -105,7 +106,9 @@ def loop():
 
     prevFrame = frame
 
-    frameU = cv2.cvtColor(mCamera.getFrame(), cv2.COLOR_RGB2GRAY)
+    mCamera.update()
+
+    frameU = cv2.cvtColor(mCamera.frame, cv2.COLOR_RGB2GRAY)
     frame = cv2.blur(frameU, (4,4))
     diffFrame = cv2.absdiff(frame, prevFrame)
 
