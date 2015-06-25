@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import cv2
-import sys, time
+import sys, time, subprocess, os
 import numpy as np
 import sc
 from threading import Thread
@@ -26,6 +26,8 @@ except Exception as e:
         @staticmethod
         def output(p, v):
             pass
+
+FNULL = open(os.devnull, 'w')
 
 FPS = 20.0
 LOOP_PERIOD = 1.0/FPS
@@ -62,6 +64,8 @@ def setup():
     global mDetector, mCascade, blobMessage, haarMessage, mClient
     global POWS, GPIOS, powVals, gpioVals
     global mSynth
+
+    subprocess.call('./prepServer.sh', shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
 
     sc.start()
     mSynth = sc.Synth("fmSynth")
