@@ -65,7 +65,7 @@ def setup():
     global POWS, GPIOS, powVals, gpioVals
     global mSynth
 
-    subprocess.call('./prepServer.sh', shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
+    subprocess.call('su -c $PWD/prepServer.sh - pi', shell=True, stdout=FNULL, stderr=subprocess.STDOUT)
 
     sc.start()
     mSynth = sc.Synth("fmSynth")
