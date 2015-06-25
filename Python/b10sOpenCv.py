@@ -3,11 +3,28 @@
 import cv2
 import sys, time
 import numpy as np
-import RPi.GPIO as GPIO
 from threading import Thread
 from OSC import OSCClient, OSCMessage
-from picamera.array import PiRGBArray
-from picamera import PiCamera
+from Camera import Camera
+
+try:
+    import RPi.GPIO as GPIO
+except Exception as e:
+    class GPIO():
+        BCM = 0
+        OUT = 0
+        @staticmethod
+        def setmode(sp):
+            pass
+        @staticmethod
+        def setup(p, v):
+            pass
+        @staticmethod
+        def cleanup():
+            pass
+        @staticmethod
+        def output(p, v):
+            pass
 
 FPS = 20.0
 LOOP_PERIOD = 1.0/FPS
@@ -29,7 +46,7 @@ cascadeDetected = 0
 FPA = 0.5
 FPB = 1.0-FPA
 
-SERVER_IP = '192.168.1.217'
+SERVER_IP = '192.168.1.165'
 #SERVER_IP = '127.0.0.1'
 SERVER_PORT = 1234
 BLOB_ADDRESS = '/b10s/blob'
@@ -40,7 +57,7 @@ blobMessage = None
 haarMessage = None
 
 def setup():
-    global prevFrame, frame, mCamera, mStream
+    global prevFrame, frame, mCamera
     global mDetector, mCascade, blobMessage, haarMessage, mClient
     global POWS, GPIOS, powVals, gpioVals
 
@@ -55,17 +72,10 @@ def setup():
     for pin in (POWS+GPIOS):
         GPIO.setup(pin, GPIO.OUT)
 
-    mCamera = PiCamera()
-    mCamera.resolution = CAM_RES
-    mCamera.framerate = 16
-    mStream = PiRGBArray(mCamera)
-    time.sleep(2.0)
+    mCamera = Camera(CAM_RES)
 
-    mCamera.capture(mStream, format="bgr")
-    frame = cv2.blur(cv2.cvtColor(mStream.array, cv2.COLOR_RGB2GRAY), (4,4))
+    frame = cv2.blur(cv2.cvtColor(mCamera.getFrame(), cv2.COLOR_RGB2GRAY), (4,4))
     prevFrame = frame
-
-    mStream.truncate(0)
 
     # Setup SimpleBlobDetector parameters.
     mParams = cv2.SimpleBlobDetector_Params()
@@ -88,18 +98,16 @@ def setup():
         print "Please provide a cascade file if you want to do face/body detection."
 
 def loop():
-    global prevFrame, frame, mCamera, mStream
+    global prevFrame, frame, mCamera
     global mDetector, mCascade, blobMessage, haarMessage, mClient
     global POWS, GPIOS, powVals, gpioVals
     global SH,XH,YH, SB,XB,YB, cascadeDetected
 
     prevFrame = frame
 
-    mCamera.capture(mStream, format="bgr", use_video_port=True)
-    frameU = cv2.cvtColor(mStream.array, cv2.COLOR_RGB2GRAY)
+    frameU = cv2.cvtColor(mCamera.getFrame(), cv2.COLOR_RGB2GRAY)
     frame = cv2.blur(frameU, (4,4))
     diffFrame = cv2.absdiff(frame, prevFrame)
-    mStream.truncate(0)
 
     ret, diffFrameThresh = cv2.threshold(diffFrame, 32, 255, cv2.THRESH_BINARY_INV)
     blobs = []
@@ -165,7 +173,8 @@ def loop():
         sys.exit(0)
 
 def cleanUp():
-    global mClient
+    global mClient, mCamera
+    mCamera.release()
     GPIO.cleanup()
     mClient.close()
     cv2.destroyAllWindows()

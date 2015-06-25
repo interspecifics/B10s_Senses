@@ -5,8 +5,28 @@ import sys, time
 import numpy as np
 from threading import Thread
 from OSC import OSCClient, OSCMessage
+from Camera import Camera
 
-FPS = 10.0
+try:
+    import RPi.GPIO as GPIO
+except Exception as e:
+    class GPIO():
+        BCM = 0
+        OUT = 0
+        @staticmethod
+        def setmode(sp):
+            pass
+        @staticmethod
+        def setup(p, v):
+            pass
+        @staticmethod
+        def cleanup():
+            pass
+        @staticmethod
+        def output(p, v):
+            pass
+
+FPS = 20.0
 LOOP_PERIOD = 1.0/FPS
 
 CAM_RES = (160, 120)
@@ -37,7 +57,7 @@ blobMessage = None
 haarMessage = None
 
 def setup():
-    global prevFrame, frame, video_capture
+    global prevFrame, frame, mCamera
     global mDetector, mCascade, blobMessage, haarMessage, mClient
     global POWS, GPIOS, powVals, gpioVals
 
@@ -48,13 +68,14 @@ def setup():
     blobMessage.setAddress(BLOB_ADDRESS)
     haarMessage.setAddress(HAAR_ADDRESS)
 
-    video_capture = cv2.VideoCapture(0)
-    video_capture.set(3,CAM_RES[0])
-    video_capture.set(4,CAM_RES[1])
+    GPIO.setmode(GPIO.BCM)
+    for pin in (POWS+GPIOS):
+        GPIO.setup(pin, GPIO.OUT)
 
-    frame = cv2.blur(cv2.cvtColor(video_capture.read()[1], cv2.COLOR_RGB2GRAY), (4,4))
+    mCamera = Camera(CAM_RES)
+
+    frame = cv2.blur(cv2.cvtColor(mCamera.getFrame(), cv2.COLOR_RGB2GRAY), (4,4))
     prevFrame = frame
-
 
     # Setup SimpleBlobDetector parameters.
     mParams = cv2.SimpleBlobDetector_Params()
@@ -77,14 +98,14 @@ def setup():
         print "Please provide a cascade file if you want to do face/body detection."
 
 def loop():
-    global prevFrame, frame, video_capture
+    global prevFrame, frame, mCamera
     global mDetector, mCascade, blobMessage, haarMessage, mClient
     global POWS, GPIOS, powVals, gpioVals
     global SH,XH,YH, SB,XB,YB, cascadeDetected
 
     prevFrame = frame
 
-    frameU = cv2.cvtColor(video_capture.read()[1], cv2.COLOR_RGB2GRAY)
+    frameU = cv2.cvtColor(mCamera.getFrame(), cv2.COLOR_RGB2GRAY)
     frame = cv2.blur(frameU, (4,4))
     diffFrame = cv2.absdiff(frame, prevFrame)
 
@@ -145,15 +166,16 @@ def loop():
                 pass
 
     # Display the resulting frame
-    cv2.imshow('_', cv2.drawKeypoints(diffFrameThresh, blobs, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS))
+    #cv2.imshow('_', cv2.drawKeypoints(diffFrameThresh, blobs, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS))
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         cleanUp()
         sys.exit(0)
 
 def cleanUp():
-    global mClient, video_capture
-    video_capture.release()
+    global mClient, mCamera
+    mCamera.release()
+    GPIO.cleanup()
     mClient.close()
     cv2.destroyAllWindows()
 
@@ -173,6 +195,9 @@ if __name__=="__main__":
     setup()
     try:
         while True:
+            GPIO.output(POWS, tuple([tensWaveVal*v for v in powVals]))
+            GPIO.output(GPIOS, tuple([tensWaveVal*v for v in gpioVals]))
+
             now = time.time()
             if (now-lastLoop > LOOP_PERIOD):
                 lastLoop = now
