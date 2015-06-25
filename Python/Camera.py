@@ -27,7 +27,7 @@ else:
             time.sleep(2.0)
         def update(self):
             self.mStream.truncate(0)
-            self.mCamera.capture(self.mStream, format="bgr")
+            self.mCamera.capture(self.mStream, format="bgr", use_video_port=True)
             self.frame = self.mStream.array
         def release(self):
             pass
