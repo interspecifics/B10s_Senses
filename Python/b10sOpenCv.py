@@ -5,7 +5,6 @@ import sys, time
 import numpy as np
 import sc
 from threading import Thread
-from OSC import OSCClient, OSCMessage
 from Camera import Camera
 
 try:
@@ -47,31 +46,14 @@ cascadeDetected = 0
 FPA = 0.5
 FPB = 1.0-FPA
 
-SERVER_IP = '192.168.1.165'
-#SERVER_IP = '127.0.0.1'
-SERVER_PORT = 1234
-BLOB_ADDRESS = '/b10s/blob'
-HAAR_ADDRESS = '/b10s/haar'
-
-mClient = None
-blobMessage = None
-haarMessage = None
-
 def setup():
     global prevFrame, frame, mCamera
-    global mDetector, mCascade, blobMessage, haarMessage, mClient
+    global mDetector, mCascade
     global POWS, GPIOS, powVals, gpioVals
     global mSynth
 
     sc.start()
     mSynth = sc.Synth("fmSynth")
-
-    mClient = OSCClient()
-    mClient.connect( (SERVER_IP, SERVER_PORT) )
-    blobMessage = OSCMessage()
-    haarMessage = OSCMessage()
-    blobMessage.setAddress(BLOB_ADDRESS)
-    haarMessage.setAddress(HAAR_ADDRESS)
 
     GPIO.setmode(GPIO.BCM)
     for pin in (POWS+GPIOS):
@@ -105,7 +87,7 @@ def setup():
 
 def loop():
     global prevFrame, frame, mCamera
-    global mDetector, mCascade, blobMessage, haarMessage, mClient
+    global mDetector, mCascade
     global POWS, GPIOS, powVals, gpioVals
     global SH,XH,YH, SB,XB,YB, cascadeDetected
     global mSynth
@@ -143,13 +125,6 @@ def loop():
         mSynth.freq1 = 150*XBN+250
         mSynth.freq2 = 5*YBN+1
 
-        blobMessage.clearData()
-        blobMessage.append([XBN,YBN,SB])
-        try:
-            mClient.send( blobMessage )
-        except Exception as e:
-            pass
-
     if mCascade is not None:
         cascadeResult = []
         if (time.time()%5 > 4):
@@ -170,12 +145,6 @@ def loop():
                 (s,x,y) = (w0, x0, y0)
         if cascadeDetected > 1.0:
             (SH,XH,YH) = (FPA*SH+FPB*s, FPA*XH+FPB*x, FPA*YH+FPB*y)
-            haarMessage.clearData()
-            haarMessage.append([XH/CAM_RES[0],YH/CAM_RES[1],SH])
-            try:
-                mClient.send( haarMessage )
-            except Exception as e:
-                pass
 
     # Display the resulting frame
     #cv2.imshow('_', cv2.drawKeypoints(diffFrameThresh, blobs, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS))
@@ -185,12 +154,11 @@ def loop():
         sys.exit(0)
 
 def cleanUp():
-    global mClient, mCamera, mSynth
+    global mCamera, mSynth
     mSynth.free()
     sc.quit()
     mCamera.release()
     GPIO.cleanup()
-    mClient.close()
     cv2.destroyAllWindows()
 
 if __name__=="__main__":
