@@ -1,5 +1,6 @@
 
 import cv2
+import time
 
 try:
     from picamera.array import PiRGBArray
