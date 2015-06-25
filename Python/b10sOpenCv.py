@@ -43,6 +43,7 @@ gpioVals = [0]*TENS_LEN
 (SB,XB,YB) = (0,0,0)
 (SH,XH,YH) = (0,0,0)
 cascadeDetected = 0
+blobDetected = 0
 FPA = 0.5
 FPB = 1.0-FPA
 
@@ -89,7 +90,7 @@ def loop():
     global prevFrame, frame, mCamera
     global mDetector, mCascade
     global POWS, GPIOS, powVals, gpioVals
-    global SH,XH,YH, SB,XB,YB, cascadeDetected
+    global SH,XH,YH, SB,XB,YB, cascadeDetected, blobDetected
     global mSynth
 
     prevFrame = frame
@@ -108,6 +109,7 @@ def loop():
     gpioVals = [0]*TENS_LEN
 
     (s,x,y) = (0,0,0)
+    blobDetected *= 0.9
     numBlobs = len(blobs)
     # average blobs
     for blob in blobs:
@@ -124,6 +126,8 @@ def loop():
 
         mSynth.freq1 = 150*XBN+250
         mSynth.freq2 = 5*YBN+1
+        blobDetected = 10.0
+    mSynth.amp = blobDetected
 
     if mCascade is not None:
         cascadeResult = []
