@@ -30,7 +30,7 @@ FPA = 0.5
 FPB = 1.0-FPA
 
 SERVER_IP = '192.168.1.217'
-SERVER_IP = '127.0.0.1'
+#SERVER_IP = '127.0.0.1'
 SERVER_PORT = 1234
 BLOB_ADDRESS = '/b10s/blob'
 HAAR_ADDRESS = '/b10s/haar'
@@ -73,6 +73,7 @@ def setup():
     mParams.maxThreshold = 32;
     mParams.filterByArea = True
     mParams.minArea = 64
+    mParams.maxArea = 10e3
     mParams.filterByConvexity = True
     mParams.minConvexity = 0.001
     mParams.filterByInertia = True
