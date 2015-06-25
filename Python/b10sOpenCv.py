@@ -63,7 +63,7 @@ def setup():
     global POWS, GPIOS, powVals, gpioVals
     global mSynth
 
-    sc.start(spew=1)
+    sc.start()
     mSynth = sc.Synth("fmSynth")
 
     mClient = OSCClient()
