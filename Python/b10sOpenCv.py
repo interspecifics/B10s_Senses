@@ -3,6 +3,7 @@
 import cv2
 import sys, time
 import numpy as np
+import sc
 from threading import Thread
 from OSC import OSCClient, OSCMessage
 from Camera import Camera
@@ -60,6 +61,10 @@ def setup():
     global prevFrame, frame, mCamera
     global mDetector, mCascade, blobMessage, haarMessage, mClient
     global POWS, GPIOS, powVals, gpioVals
+    global mSynth
+
+    sc.start(spew=1)
+    mSynth = sc.Synth("fmSynth")
 
     mClient = OSCClient()
     mClient.connect( (SERVER_IP, SERVER_PORT) )
@@ -103,6 +108,7 @@ def loop():
     global mDetector, mCascade, blobMessage, haarMessage, mClient
     global POWS, GPIOS, powVals, gpioVals
     global SH,XH,YH, SB,XB,YB, cascadeDetected
+    global mSynth
 
     prevFrame = frame
 
@@ -133,6 +139,9 @@ def loop():
         pulseLocationIndex = int(XBN*2)+2*int(YBN*2)
         powVals[pulseLocationIndex] = 0
         gpioVals[pulseLocationIndex] = 1
+
+        mSynth.freq1 = 150*XBN+250
+        mSynth.freq2 = 5*YBN+1
 
         blobMessage.clearData()
         blobMessage.append([XBN,YBN,SB])
@@ -176,7 +185,9 @@ def loop():
         sys.exit(0)
 
 def cleanUp():
-    global mClient, mCamera
+    global mClient, mCamera, mSynth
+    mSynth.free()
+    sc.quit()
     mCamera.release()
     GPIO.cleanup()
     mClient.close()
