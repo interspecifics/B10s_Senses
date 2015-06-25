@@ -15,4 +15,4 @@ then
     killsynthid=`ps -u $uname | awk '/scsynth/{print $1}'`
     kill -9 $killsynthid
 fi
-scsynth -u 57110
+scsynth -u 57110 &
