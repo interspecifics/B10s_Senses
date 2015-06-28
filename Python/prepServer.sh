@@ -4,8 +4,12 @@
 uname=`whoami`
 
 # kills all python and sudo processes
-kpids=`ps -u root | grep 'ython\|sudo' | grep -v grep | awk '/ython|sudo/{print $1}'`
-sudo kill -9 $kpids
+ispython=`ps -u root | grep 'ython\|sudo' | grep -v grep | wc -l`
+if [ $ispython -ge 1 ]
+then
+    kpids=`ps -u root | grep 'ython\|sudo' | grep -v grep | awk '/ython|sudo/{print $1}'`
+    sudo kill -9 $kpids
+fi
 
 isjack=`ps -u $uname | grep jack | grep -v grep | wc -l`
 if [ $isjack -ge 1 ]
