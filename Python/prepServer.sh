@@ -13,7 +13,7 @@ then
     killjackid=`ps -u $uname | awk '/jack/{print $1}'`
     kill -9 $killjackid
 fi
-jackd -p32 -dalsa -dhw:0,0 -p1024 -n3 -s &
+nohup jackd -p32 -dalsa -dhw:0,0 -p1024 -n3 -s &
 
 issynth=`ps -u $uname | grep scsynth | grep -v grep | wc -l`
 if [ $issynth -ge 1 ]
@@ -21,4 +21,4 @@ then
     killsynthid=`ps -u $uname | awk '/scsynth/{print $1}'`
     kill -9 $killsynthid
 fi
-scsynth -u 57110 &
+nohup scsynth -u 57110 &
