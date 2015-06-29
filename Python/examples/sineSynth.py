@@ -10,7 +10,7 @@ print 'hello world........'
 
 sc.start( verbose=1, spew=1 )
 
-sine = sc.Synth( "sine" )
+sine = sc.Synth( "sineSynth" )
 
 sine.freq = 444
 
