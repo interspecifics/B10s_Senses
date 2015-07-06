@@ -1,7 +1,7 @@
-# B10s_Senses
+# Open Sensory Substitution 
 Repository for the 0SS OPEN SENSORY SUNTITUTION project
 
-# HARDAWARE:
+# HARDWARE:
 RaspberryPi B+
 camara module for raspberry 
 micro sd cards  
@@ -11,7 +11,7 @@ lithium baterrys for the raspberry
 # RASPBIAN IMAGE WITH LIBRARIES AND CODE:
 http://interspecifics.cc/downloads/OSSraspi.dmg
 
-#Libraries and installas
+#Libraries and installs
 
 - OpenCV for python
 - SuperCollider 
