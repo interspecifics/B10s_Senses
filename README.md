@@ -2,11 +2,11 @@
 Repository for the 0SS OPEN SENSORY SUNTITUTION project
 
 # HARDWARE:
--RaspberryPi B+
--camara module for raspberry 
--micro sd cards  
--electro-tactil transducers 
--lithium baterrys for the raspberry 
+- RaspberryPi B+
+- Camara module for raspberry 
+- Micro sd cards  
+- Electro-tactil transducers 
+- Lithium baterrys for the raspberry 
 
 # RASPBIAN IMAGE WITH LIBRARIES AND CODE:
 http://interspecifics.cc/downloads/OSSraspi.dmg
