@@ -10,6 +10,7 @@ In this project we are using OpenCV to detect blobs from a video camara attached
 - Lithium baterrys for the raspberry 
 
 # RASPBIAN IMAGE WITH LIBRARIES AND CODE:
+The following image contains all the libraries neceserry to round the OSS incluiding the python scripts to comunicate OpenCV with SuperCollider. 
 http://interspecifics.cc/downloads/OSSraspi.dmg
 
 #Libraries and installs
@@ -24,4 +25,10 @@ The language interpreter runs in a cross platform IDE (OS X/Linux/Windows) and c
 - SC.V0.3.1 : http://www.ixi-software.net/content/download/sc/sc-0.3.1.zip
 the scosc module converts standard python types to supercollider osc messages.
 In order to play sounds in musical time, we have to send OSC messages with timestamps. Because the server has a limited message buffer (1024), we have to send messages as a stream in real-time. The challenge is getting the messages in early enough that the server can process them, while not sending too many as to override the buffer. We also have to take latency into account, which makes this a much bigger bundle of fun.
+
+#HOW TO RUN THE SOFTWARE
+
+1- 
+2-
+3-
 
