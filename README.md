@@ -32,7 +32,7 @@ In order to play sounds in musical time, we have to send OSC messages with times
 
 #HOW TO RUN THE SOFTWARE
 
-- 1- 
-- 2-
+- 1- $ ssh pi@sensory1.local
+- 2- $ password: 1234
 - 3-
 
