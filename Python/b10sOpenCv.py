@@ -55,6 +55,7 @@ def setup():
 
     sc.start()
     mSynth = sc.Synth("fmSynth")
+    #mSynth = sc.Synth("PMCrotale")
 
     GPIO.setmode(GPIO.BCM)
     for pin in (POWS+GPIOS):
