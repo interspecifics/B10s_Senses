@@ -27,8 +27,8 @@ Out.ar(0, out); //Out.ar(bus, out);
 (
 OSCdef('pdlistener',{
 	arg msg;
-	Synth("PMCrotale", ["midi", msg[1].round(1), "tone", msg[2], "amp", msg[2]]);
-}, "/print");
+	Synth("PMCrotale", ["midi", msg[1], "tone", msg[1]/7.5, "art", msg[1]/4]);
+}, "/bpm");
 )
 
 
