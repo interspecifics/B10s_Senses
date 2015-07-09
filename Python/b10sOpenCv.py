@@ -124,10 +124,16 @@ def loop():
         pulseLocationIndex = int(XBN*2)+2*int(YBN*2)
         powVals[pulseLocationIndex] = 0
         gpioVals[pulseLocationIndex] = 1
-
+        #set up Synth
         mSynth.freq1 = 150*XBN+250
         mSynth.freq2 = 5*YBN+1
         blobDetected = 10.0
+
+        #another Synth
+        #mSynth.midi = XBN
+        #mSynth.art = 1*YBN
+        #mSynth.tone = 6*XBN+4
+        
     mSynth.amp = blobDetected
 
     if mCascade is not None:
