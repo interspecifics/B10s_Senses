@@ -48,7 +48,7 @@ In order to play sounds in musical time, we have to send OSC messages with times
 In the following example with show a regular synthdef from supercollider using the sclang lenguage:
 
 ___________________________
-
+ ```
 (
 SynthDef("PMCrotale", {
 arg midi = 60, tone = 3, art = 1, amp = 0.8, pan = 0;
@@ -68,13 +68,13 @@ Out.ar(0, out); //Out.ar(bus, out);
 
 
 Synth("PMCrotale", ["midi", rrand(48, 72).round(1), "tone", rrand(1, 6)])
-
+ ```
 In this case we invoque using a regular synth argument.
 
 ___________________________
 
 Using python tu interface:
-
+ ```
 import sc
 import time, random
 
@@ -102,3 +102,5 @@ PMCrotale.free()
 sc.quit()
 
 print 'seeya world! ...........'
+
+ ```
