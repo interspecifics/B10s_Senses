@@ -1,6 +1,8 @@
 # Open Sensory Substitution 
-Repository for the 0SS_ OPEN SENSORY SUNTITUTION.
-In this project we are using OpenCV to detect blobs from a video camara attached to the Raspberry Pi, this detections is later tranform into sound using SuperCollider and SC.VO.3.1 for python and electrical impulses using GPIOS. 
+
+The aim of the prototype of sensory substitution is to allow the brain to create a mapping of space through sound and electrotáctiles sensations. And thus consider expanding human capabilities and challenge the Aristotelian conception that postulates five senses with specific functions clearly separated from each other.
+
+In this project we are using OpenCV to detect blobs from a video camara attached to the Raspberry Pi, this detections is later tranform into sound using SuperCollider and SC.VO.3.1 for python and electrical impulses using GPIOS.
 
 # HARDWARE:
 - RaspberryPi B+
