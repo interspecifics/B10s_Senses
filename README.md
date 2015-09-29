@@ -1,8 +1,13 @@
 # Open Sensory Substitution 
 
+![the system](https://github.com/Lessnullvoid/B10s_Senses/blob/master/SensorySubMap.jpg?raw=true)
+
 The aim of the prototype of sensory substitution is to allow the brain to create a mapping of space through sound and electrotáctiles sensations. And thus consider expanding human capabilities and challenge the Aristotelian conception that postulates five senses with specific functions clearly separated from each other.
 
 In this project we are using OpenCV to detect blobs from a video camara attached to the Raspberry Pi, this detections is later tranform into sound using SuperCollider and SC.VO.3.1 for python and electrical impulses using GPIOS.
+
+![The kit](https://github.com/Lessnullvoid/B10s_Senses/blob/master/imgs/18807535644_e66a302e5a_k.jpg?raw=true)
+![The kit](https://github.com/Lessnullvoid/B10s_Senses/blob/master/imgs/19434279301_c247439d17_k.jpg?raw=true)
 
 # HARDWARE:
 - RaspberryPi B+
@@ -106,3 +111,10 @@ sc.quit()
 print 'seeya world! ...........'
 
  ```
+#FUTURE DEVELOPMENTS:
+
+![uNIVERSAL](https://github.com/Lessnullvoid/B10s_Senses/blob/master/workshop/Sensory_Substitution_Liang.png?raw=true)
+![mood](https://github.com/Lessnullvoid/B10s_Senses/blob/master/workshop/moodSensor.png?raw=true)
+
+
+
