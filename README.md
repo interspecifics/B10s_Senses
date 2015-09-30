@@ -1,4 +1,4 @@
-# Open Sensory Substitution 
+# Open Sensory Substitution by Interspecifics
 
 The term sensory substitution refers to a non-invasive technique introduced by neuroscientist Paul Bach-y-Rita in the 60's who attends restoring senses damaged using hybrid interfaces brain-machine to redirect certain characteristics of a sensory modality to another and using the adaptive capacities of the brain to replace perceptual categories. He suggests that while the brain and its connection with the environment operate properly, peripheral sensory systems are secondary in the exercise of global cognition.
 
@@ -119,6 +119,14 @@ The following maps were designed during the workshop of sensory substitution in 
 
 ![uNIVERSAL](https://github.com/Lessnullvoid/B10s_Senses/blob/master/workshop/Sensory_Substitution_Liang.png?raw=true)
 ![mood](https://github.com/Lessnullvoid/B10s_Senses/blob/master/workshop/moodSensor.png?raw=true)
+
+#TEAM
+Paloma López
+Leslie García
+Thiago Hersan
+
+info[at]interspecifics.cc
+
 
 
 
