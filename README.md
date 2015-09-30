@@ -121,9 +121,9 @@ The following maps were designed during the workshop of sensory substitution in 
 ![mood](https://github.com/Lessnullvoid/B10s_Senses/blob/master/workshop/moodSensor.png?raw=true)
 
 #TEAM
-Paloma López
-Leslie García
-Thiago Hersan
+- Paloma López
+- Leslie García
+- Thiago Hersan
 
 info[at]interspecifics.cc
 
