@@ -1,5 +1,7 @@
 # Open Sensory Substitution 
 
+The term sensory substitution refers to a non-invasive technique introduced by neuroscientist Paul Bach-y-Rita in the 60's who attends restoring senses damaged using hybrid interfaces brain-machine to redirect certain characteristics of a sensory modality to another and using the adaptive capacities of the brain to replace perceptual categories. He suggests that while the brain and its connection with the environment operate properly, peripheral sensory systems are secondary in the exercise of global cognition.
+
 ![the system](https://github.com/Lessnullvoid/B10s_Senses/blob/master/SensorySubMap.jpg?raw=true)
 
 The aim of the prototype of sensory substitution is to allow the brain to create a mapping of space through sound and electrotáctiles sensations. And thus consider expanding human capabilities and challenge the Aristotelian conception that postulates five senses with specific functions clearly separated from each other.
