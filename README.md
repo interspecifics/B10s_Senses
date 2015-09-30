@@ -115,6 +115,8 @@ print 'seeya world! ...........'
  ```
 #FUTURE DEVELOPMENTS:
 
+The following maps were designed during the workshop of sensory substitution in the UDK Berlin. The idea to expand the possibilities of the system in search of a systematic process that also allows sensory expansion.
+
 ![uNIVERSAL](https://github.com/Lessnullvoid/B10s_Senses/blob/master/workshop/Sensory_Substitution_Liang.png?raw=true)
 ![mood](https://github.com/Lessnullvoid/B10s_Senses/blob/master/workshop/moodSensor.png?raw=true)
 
