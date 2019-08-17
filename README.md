@@ -4,22 +4,22 @@ The term sensory substitution refers to a non-invasive technique introduced by n
 
 ![the system](https://github.com/Lessnullvoid/B10s_Senses/blob/master/SensorySubMap.jpg?raw=true)
 
-The aim of the prototype of sensory substitution is to allow the brain to create a mapping of space through sound and electrotáctiles sensations. And thus consider expanding human capabilities and challenge the Aristotelian conception that postulates five senses with specific functions clearly separated from each other.
+The aim of the prototype of sensory substitution is to allow the brain to create a mapping of space through sound and electro-tactile sensations. And thus consider expanding human capabilities and challenge the Aristotelian conception that postulates five senses with specific functions clearly separated from each other.
 
-In this project we are using OpenCV to detect blobs from a video camara attached to the Raspberry Pi, this detections is later tranform into sound using SuperCollider and SC.VO.3.1 for python and electrical impulses using GPIOS.
+In this project we are using OpenCV to detect blobs from a video camera attached to the Raspberry Pi, this detections is later tranform into sound using SuperCollider and SC.VO.3.1 for python and electrical impulses using GPIOS.
 
 ![The kit](https://github.com/Lessnullvoid/B10s_Senses/blob/master/imgs/18807535644_e66a302e5a_k.jpg?raw=true)
 ![The kit](https://github.com/Lessnullvoid/B10s_Senses/blob/master/imgs/19434279301_c247439d17_k.jpg?raw=true)
 
 # HARDWARE:
 - RaspberryPi B+
-- Camara module for raspberry 
+- Camera module for raspberry 
 - Micro sd cards  
-- Electro-tactil transducers 
-- Lithium baterrys for the raspberry 
+- Electro-tactile transducers 
+- Lithium batteries for the raspberry 
 
 # RASPBIAN IMAGE WITH LIBRARIES AND CODE:
-The following image contains all the libraries necessary to round the OSS, incluiding the python scripts to comunicate OpenCV with SuperCollider. 
+The following image contains all the libraries necessary to round the OSS, including the python scripts to comunicate OpenCV with SuperCollider. 
 
 - http://interspecifics.cc/downloads/OSSraspi.dmg
 
@@ -39,7 +39,7 @@ The language interpreter runs in a cross platform IDE (OS X/Linux/Windows) and c
 The scosc module converts standard python types to supercollider osc messages.
 In order to play sounds in musical time, we have to send OSC messages with timestamps. Because the server has a limited message buffer (1024), we have to send messages as a stream in real-time. The challenge is getting the messages in early enough that the server can process them, while not sending too many as to override the buffer. We also have to take latency into account, which makes this a much bigger bundle of fun.
 
-#HOW TO RUN THE SOFTWARE
+# HOW TO RUN THE SOFTWARE
 
 - $ ssh pi@sensory1.local
 - $ password: 1234
@@ -52,7 +52,7 @@ In order to play sounds in musical time, we have to send OSC messages with times
 - $ sudo python b10sOpenCv.py
 
 
-#Python + SuperCollider examples
+# Python + SuperCollider examples
 
 In the following example with show a regular synthdef from supercollider using the sclang lenguage:
 
@@ -113,14 +113,14 @@ sc.quit()
 print 'seeya world! ...........'
 
  ```
-#FUTURE DEVELOPMENTS:
+# FUTURE DEVELOPMENTS:
 
 The following maps were designed during the workshop of sensory substitution in the UDK Berlin. The idea to expand the possibilities of the system in search of a systematic process that also allows sensory expansion.
 
 ![uNIVERSAL](https://github.com/Lessnullvoid/B10s_Senses/blob/master/workshop/Sensory_Substitution_Liang.png?raw=true)
 ![mood](https://github.com/Lessnullvoid/B10s_Senses/blob/master/workshop/moodSensor.png?raw=true)
 
-#TEAM
+# TEAM
 - Paloma López
 - Leslie García
 - Thiago Hersan
